@@ -9,9 +9,9 @@ A collection of my data analytics projects built using Excel, Power BI, and SQL.
 
 ## 📈 Power BI Projects
 
-- [Healthcare Provider Analytics Dashboard](./Power%20BI%20Projects/Healthcare%20ER%20Dashboard)
+- [Healthcare Provider Analytics Dashboard](https://github.com/Rifat250/Data-Analytics-Projects/tree/main/Power%20BI%20Projects/Healthcare%20Provider%20Analytics%20Dashboard)
 - [Pizza Sales Report Dashboard](./Power%20BI%20Projects/Pizza%20Sales%20Report%20Dashboard)
-- [Hospital Emergency Room Analysis Dashboard](https://github.com/Rifat250/hospital-emergency-room-analysis-powerbi/blob/main/README.md)
+- [Hospital Emergency Room Analysis Dashboard](https://github.com/Rifat250/Data-Analytics-Projects/tree/main/Power%20BI%20Projects/Hospital%20Emergency%20Room%20Analysis%20Dashboard)
 
 ## 🗄️ SQL Projects
 
