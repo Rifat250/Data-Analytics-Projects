@@ -1,78 +1,35 @@
-# Adventure Works Bike Shop: Sales Analysis Dashboard (Power BI)
+# Adventure Works Sales Analysis Dashboard
 
-A 4-page interactive Power BI report that tracks revenue, profit, orders and returns for **Adventure Works**, a fictional bike and accessories retailer selling in North America, Europe and the Pacific (Jan 2020 to Jun 2022).
-
-The report goes from a company-wide view down to individual products and customers. It also includes a **what-if price simulator** that shows how a price change would affect profit.
+An interactive 4-page Power BI dashboard that analyzes sales, profit, orders, returns, products, customers and geography for **Adventure Works**, a bike and accessories retailer (Jan 2020 – Jun 2022).
 
 ![Executive Dashboard](images/01_executive_dashboard.png)
 
 ---
 
-## Business questions
+## Executive Summary
 
-1. How are revenue, profit, orders and returns trending, and how does this month compare with last month?
-2. Which product categories and products drive order volume, revenue and returns?
-3. Which countries and regions contribute the most to sales?
-4. For any product, how is it performing against target, and what happens to profit if we change its price?
-5. Who are the most valuable customers, and what is their income level and occupation?
+Adventure Works generated **$24.91M in revenue** and **$10.46M in profit** from **25K orders** placed by **17.4K customers**, with a **2.17% return rate**. Monthly revenue rose from around **$0.5M** in early 2020 to **$1.83M** in the latest month. Accessories lead in order volume, Australia and the United States are the largest markets, and medium- and low-income customers place most of the orders.
 
-## Headline numbers
+## Business Problem
 
-| Metric | Value |
-|---|---|
-| Revenue | **$24.91M** |
-| Profit | **$10.46M** (42% margin) |
-| Orders | **25,164** |
-| Customers | **17,416** |
-| Return rate | **2.17%** |
-| Period | Jan 2020 to Jun 2022 (912 days) |
+Sales, returns, product and customer data were stored in separate files, so management had no single place to answer basic questions:
 
-## Key insights
+- How are revenue, profit, orders and returns trending month over month?
+- Which categories and products drive sales, and which are returned most?
+- Which countries and regions contribute the most?
+- How is each product performing against target, and how would a price change affect profit?
+- Who are the most valuable customers?
 
-- **Strong growth.** Revenue in Jan to Jun 2022 was **$9.19M**, about **3x** the same period of 2021 ($2.95M). June 2022 was the best month in the data at **$1.83M**.
-- **Bikes earn the money, accessories bring the orders.** Bikes generate **95% of revenue**. Accessories appear in the most orders (17K) but give only 3.6% of revenue, though at the highest margin (**63%** vs 41% for bikes).
-- **The order mix changed in 2021.** Orders grew about **4x** from 2020 to 2021 (2,630 to 10,695) while revenue grew 46%. Many more orders now include low-price accessories, so cross-selling them with bikes is an opportunity.
-- **Two markets dominate.** The **United States (32%)** and **Australia (30%)** together bring in over 60% of revenue.
-- **Bikes are returned most often.** The bike return rate is **3.1%**, against about 2% for accessories and clothing. Among the Top 10 products, Sport-100 helmets (red and blue) have the highest return rate, about 3.3%.
-- **Top-selling product by orders:** Water Bottle (30 oz.), 3,983 orders. **Top revenue products:** the Mountain-200 bike family (about $1.2M each).
+This dashboard brings all of it into one interactive report.
 
----
+## Methodology
 
-## Report pages
+1. **Data preparation (Power Query):** imported 7 CSV lookup/fact files and combined the yearly sales files with `Folder.Files`; removed junk header rows, null keys and error rows; set data types; added date attributes (Year, Month, Day Name, Start of Week/Month/Year).
+2. **Data modeling:** built a **star schema** with two fact tables (Sales Data – 56,046 rows, Returns Data – 1,809 rows) and dimension tables for Calendar, Customer, Product, Product Subcategory, Product Category and Territory (one-to-many, single-direction relationships).
+3. **DAX measures:** created 27 measures in a dedicated `_All Measures` table for revenue, cost, profit, orders, returns, return rate, month-over-month comparison, targets, what-if pricing and top customer.
+4. **Dashboard design:** designed 4 pages with a custom theme, slide-out filter panel, page navigation, drill-through and tooltip pages.
 
-### 1. Executive Dashboard
-KPI cards (Revenue, Profit, Orders, Return Rate), a monthly revenue trend with a linear trend line, orders by category, a Top 10 products matrix with conditional formatting, and month-over-month KPI cards (current vs previous month).
-
-A **slide-out filter panel** (Year and Continent), opened with bookmarks, keeps the canvas clean:
-
-![Filter panel](images/02_filter_panel.png)
-
-### 2. Map
-A **field-parameter** switch lets the user choose the metric (Revenue / Orders / Profit / Returns / Return %) and the geography level (Continent / Country / Region) shown on the map.
-
-![Map](images/03_map.png)
-
-### 3. Product Details (drill-through)
-Right-click any product to drill through to this page. It shows:
-- **Gauges** for monthly revenue, orders and profit against target
-- A **Price Adjustment (%) what-if slider** comparing *Total Profit* with *Adjusted Profit*
-- A metric switcher for the monthly trend
-- A **dynamic Report Summary** whose text updates with the selected product and price change
-
-![Product Details](images/04_product_details.png)
-
-### 4. Customer Details
-Customer count and revenue per customer, orders by income level and by occupation, a Top 100 customers table, and a dynamic **Top Customer (by revenue)** callout.
-
-![Customer Details](images/05_customer_details.png)
-
-There is also a hidden **report-page tooltip** with a multi-row card and area chart.
-
----
-
-## Data model
-
-A star schema with two fact tables (**Sales**, **Returns**) sharing lookup dimensions. All relationships are one-to-many with single-direction filtering.
+### Data Model
 
 ```mermaid
 erDiagram
@@ -87,98 +44,96 @@ erDiagram
     "Product Subcategories Lookup" }o--|| "Product Categories Lookup" : ProductCategoryKey
 ```
 
-| Table | Type | Rows |
-|---|---|---|
-| Sales Data | Fact | 56,046 |
-| Returns Data | Fact | 1,809 |
-| Customer Lookup | Dimension | 18,148 |
-| Calendar Lookup | Dimension | 912 |
-| Product Lookup | Dimension | 293 |
-| Product Subcategories Lookup | Dimension | 37 |
-| Territory Lookup | Dimension | 10 |
-| Product Categories Lookup | Dimension | 4 |
+### Sample DAX
 
----
-
-## Data preparation (Power Query)
-
-- **Sales Data** is loaded with `Folder.Files`, so the yearly sales files (2020, 2021, 2022) are combined automatically. A new year's file only needs to be dropped into the folder.
-- **Customer Lookup:** removed junk header rows, promoted headers, set data types, removed error rows and null keys.
-- **Calendar Lookup:** added Year, Month, Month Name, Day, Day Name, Start of Week and Start of Year columns.
-- Explicit data types are set on every table.
-
-
-## DAX highlights
-
-All 27 measures are stored in a dedicated `_All Measures` table. Full code: [`dax/measures.dax`](dax/measures.dax)
-
-**Revenue with row context (`SUMX` + `RELATED`)**
 ```DAX
 Total Revenue =
 SUMX ( 'Sales Data', 'Sales Data'[OrderQuantity] * RELATED ( 'Product Lookup'[ProductPrice] ) )
-```
 
-**Month-over-month (time intelligence)**
-```DAX
 Previous Month Revenue =
 CALCULATE ( [Total Revenue], DATEADD ( 'Calendar Lookup'[Date], -1, MONTH ) )
-```
 
-**What-if price simulation**
-```DAX
-Adjusted Price   = [Average Retail Price] * ( 1 + 'Price Adjustment (%)'[Price Adjustment (%) Value] )
-Adjusted Revenue = SUMX ( 'Sales Data', 'Sales Data'[OrderQuantity] * [Adjusted Price] )
-Adjusted Profit  = [Adjusted Revenue] - [Total Cost]
-```
+Adjusted Profit = [Adjusted Revenue] - [Total Cost]   -- what-if price simulation
 
-**Top customer by revenue, respecting slicers (`TOPN` + `ALLSELECTED`)**
-```DAX
 Top Customer =
-VAR TopCustomer =
-    TOPN ( 1, ALLSELECTED ( 'Customer Lookup'[Full Name] ), [Total Revenue], DESC )
-RETURN
-    MAXX ( TopCustomer, 'Customer Lookup'[Full Name] )
+VAR TopCustomer = TOPN ( 1, ALLSELECTED ( 'Customer Lookup'[Full Name] ), [Total Revenue], DESC )
+RETURN MAXX ( TopCustomer, 'Customer Lookup'[Full Name] )
 ```
 
-**Performance label used in the dynamic summary**
-```DAX
-Performance Status =
-SWITCH ( TRUE (),
-    [Revenue Achievement %] >= 1,    "Excellent",
-    [Revenue Achievement %] >= 0.90, "Strong",
-    [Revenue Achievement %] >= 0.75, "Satisfactory",
-    "Needs Improvement" )
-```
+All measures: [`dax/measures.dax`](dax/measures.dax) · Field and what-if parameters: [`dax/parameters.dax`](dax/parameters.dax) · Calculated columns: [`dax/calculated_columns.dax`](dax/calculated_columns.dax)
 
-Field parameters (`NAMEOF`), the what-if parameter (`GENERATESERIES`) and calculated columns such as **Income Level** are in [`dax/parameters.dax`](dax/parameters.dax) and [`dax/calculated_columns.dax`](dax/calculated_columns.dax).
+## Skills Used
 
----
+- **Power Query:** data cleaning, folder-based file combining, data type handling
+- **Data Modeling:** star schema with two fact tables
+- **DAX:** SUMX, RELATED, CALCULATE, DATEADD, DIVIDE, TOPN, ALLSELECTED, SWITCH
+- **Advanced features:** field parameters, what-if parameter, drill-through, report-page tooltip, bookmarks
+- **Visualization:** KPI cards, trend line, gauges, map, donut charts, matrix with conditional formatting, dynamic text
 
-## Power BI features used
+## Dashboard Pages
 
-Star-schema modeling · DAX (SUMX, RELATED, CALCULATE, DATEADD, DIVIDE, TOPN, ALLSELECTED, SWITCH) · Field parameters · What-if parameter · Drill-through page · Report-page tooltip · Bookmarks and slide-out filter panel · Page navigation buttons · Conditional formatting · Dynamic text · Gauges, KPI cards, map, donut, matrix
+### 1. Executive Dashboard
+KPI cards, revenue trend, orders by category, Top 10 products, and month-over-month cards. A slide-out panel filters by Year and Continent.
 
-## Repository structure
+![Filter Panel](images/02_filter_panel.png)
 
-```
-├── Adventure_Works_Sales_Dashboard.pbix   # Power BI report file
-├── dax/
-│   ├── measures.dax
-│   ├── calculated_columns.dax
-│   └── parameters.dax
-└── images/                                # Dashboard screenshots
-```
+### 2. Map
+Switch the metric (Revenue / Orders / Profit / Returns / Return %) and the level (Continent / Country / Region) with field parameters.
 
-## How to open
+![Map](images/03_map.png)
 
-1. Install [Power BI Desktop](https://powerbi.microsoft.com/desktop/) (free, Windows).
-2. Download or clone this repository and open `Adventure_Works_Sales_Dashboard.pbix`.
+### 3. Product Details (Drill-through)
+Gauges for revenue, orders and profit against target, a **price adjustment slider** comparing actual and adjusted profit, and a dynamic summary.
 
-## Dataset
+![Product Details](images/04_product_details.png)
 
-Microsoft **AdventureWorks** sample data (fictional company, CSV version). All customer names and emails are fictional.
+### 4. Customer Details
+Customer count, revenue per customer, orders by income level and occupation, Top 100 customers and the top customer by revenue.
+
+![Customer Details](images/05_customer_details.png)
+
+## Results
+
+**Overall**
+- **Revenue:** $24.91M · **Profit:** $10.46M · **Orders:** 25K · **Return Rate:** 2.17%
+- **Latest month:** revenue **$1.83M** (+3.31% vs previous month), orders **2,146** (-0.88%), returns **167**
+- Revenue shows a clear **upward trend** from 2020 to 2022, with the sharpest rise from mid-2021.
+
+**Products**
+- **Accessories** have the most orders (**17K**), followed by Bikes (**14K**) and Clothing (**7K**).
+- **Water Bottle – 30 oz.** is the most ordered product (**3,983 orders**).
+- **Road-650 Red, 52** is the most returned product.
+- Among the Top 10 products, **Sport-100 Helmet Red (3.33%)** and **Blue (3.31%)** have the highest return rates.
+
+**Geography**
+- **Australia** and the **Southwest** region of the United States show the largest order volumes on the map, followed by Northwest (US), Canada, the UK, Germany and France.
+
+**Customers**
+- **17.4K customers** with an average revenue of **$1.43K per customer**.
+- **Medium-income (11.6K)** and **low-income (11.1K)** customers place far more orders than high-income customers (2.2K).
+- **Professional (7.9K)** and **Skilled Manual (6.0K)** customers are the leading occupation groups.
+- The top customer by revenue, **Mr. Maurice Shan**, generated **$12.41K** from just **6 orders**.
+
+**Price simulation (example)**
+- For Water Bottle – 30 oz., a **20% price increase** raises adjusted profit by **31.95%** (assuming the same order volume).
+
+## Recommendations
+
+1. **Cross-sell accessories with bikes:** accessories are ordered most often, so bundle them with bike purchases to raise order value.
+2. **Reduce returns on high-return products:** review sizing, product descriptions and quality checks for Sport-100 helmets and Road-650 Red, 52.
+3. **Focus on the core markets:** prioritize Australia and the US Southwest, where order volume is highest.
+4. **Target the main customer segments:** design campaigns for medium- and low-income, professional and skilled-manual customers, who place most orders.
+5. **Watch order volume:** revenue grew in the latest month while orders dipped slightly, so track whether order counts recover.
+6. **Test price changes before applying them:** use the price adjustment slider to check the profit impact product by product.
+
+## Files
+
+- `Adventure_Works_Sales_Dashboard.pbix` – Power BI report
+- `dax/` – DAX measures, calculated columns and parameters
+- `images/` – dashboard screenshots
 
 ## Author
 
-**Maksud-Ur-Rashid** · Data Analyst · Excel · Power BI · SQL · Python
+**Maksud-Ur-Rashid**
+Data Analyst | Power BI | Excel | SQL | Python
 GitHub: [@Rifat250](https://github.com/Rifat250)
