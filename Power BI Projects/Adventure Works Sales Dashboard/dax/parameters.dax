@@ -1,0 +1,35 @@
+// Calculated tables: field parameters and the what-if parameter
+
+'Location Parameter' =
+{
+    ("Continent", NAMEOF('Territory Lookup'[Continent]), 0),
+    ("Country", NAMEOF('Territory Lookup'[Country]), 1),
+    ("Region", NAMEOF('Territory Lookup'[Region]), 2)
+}
+
+'KPI Parameter' =
+{
+    ("Orders", NAMEOF('_All Measures'[Total Orders]), 0),
+    ("Revenue", NAMEOF('_All Measures'[Total Revenue]), 1),
+    ("Profit", NAMEOF('_All Measures'[Total Profit]), 2),
+    ("Returns", NAMEOF('_All Measures'[Total Returns]), 3)
+}
+
+'Price Adjustment (%)' =
+GENERATESERIES(-1, 1, 0.1)
+
+'Product Selection Metric' =
+{
+    ("Revenue", NAMEOF('_All Measures'[Total Revenue]), 0),
+    ("Orders", NAMEOF('_All Measures'[Total Orders]), 1),
+    ("Profit", NAMEOF('_All Measures'[Total Profit]), 2),
+    ("Returns", NAMEOF('_All Measures'[Total Returns]), 3),
+    ("Return %", NAMEOF('_All Measures'[Return Rate]), 4)
+}
+
+'Customer Selection Metric' =
+{
+    ("Customers", NAMEOF('_All Measures'[Total Customer]), 0),
+    ("Revenue Per Customer", NAMEOF('_All Measures'[Average Revenue Per Customer]), 1)
+}
+

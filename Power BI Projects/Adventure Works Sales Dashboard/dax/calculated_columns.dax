@@ -1,0 +1,20 @@
+// Calculated columns
+
+'Calendar Lookup'[Start of Month] =
+    DATE(
+            'Calendar Lookup'[Year],
+            'Calendar Lookup'[Month],
+            1
+    )
+
+'Customer Lookup'[Income Level] =
+    SWITCH(
+            TRUE(),
+            'Customer Lookup'[AnnualIncome] <= 50000,"Low",
+            'Customer Lookup'[AnnualIncome] <= 100000,"Medium",
+            'Customer Lookup'[AnnualIncome] <= 150000,"High",
+            "Very High")
+
+'Customer Lookup'[Full Name] =
+    'Customer Lookup'[Prefix] &" "& 'Customer Lookup'[FirstName] & " " & 'Customer Lookup'[LastName]
+

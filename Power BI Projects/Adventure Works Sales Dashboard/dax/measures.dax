@@ -1,0 +1,150 @@
+// Adventure Works Sales Dashboard - DAX measures
+// Exported from the Power BI model (home table: _All Measures)
+
+// ===== Core KPIs =====
+
+'_All Measures'[Total Revenue] =
+    SUMX('Sales Data','Sales Data'[OrderQuantity]
+        * RELATED('Product Lookup'[ProductPrice])
+    )
+
+'_All Measures'[Total Cost] =
+    SUMX('Sales Data','Sales Data'[OrderQuantity]
+        * RELATED('Product Lookup'[ProductCost])
+    )
+
+'_All Measures'[Total Profit] =
+    [Total Revenue]-[Total Cost]
+
+'_All Measures'[Total Orders] =
+    DISTINCTCOUNT('Sales Data'[OrderNumber])
+
+'_All Measures'[Quantity Sold] =
+    SUM('Sales Data'[OrderQuantity])
+
+'_All Measures'[Total Customer] =
+    DISTINCTCOUNT('Sales Data'[CustomerKey])
+
+'_All Measures'[Average Revenue Per Customer] =
+    DIVIDE([Total Revenue],[Total Customer])
+
+// ===== Returns =====
+
+'_All Measures'[Quantity Returned] =
+    SUM('Returns Data'[ReturnQuantity])
+
+'_All Measures'[Total Returns] =
+    SUM('Returns Data'[ReturnQuantity])
+
+'_All Measures'[Return Rate] =
+    DIVIDE([Quantity Returned],[Quantity Sold],"No Sales")
+
+// ===== Time intelligence (month-over-month) =====
+
+'_All Measures'[Previous Month Revenue] =
+    CALCULATE(
+            [Total Revenue],
+                DATEADD('Calendar Lookup'[Date],-1,MONTH)
+    )
+
+'_All Measures'[Previous Month Order] =
+    CALCULATE(
+            [Total Orders],
+                DATEADD('Calendar Lookup'[Date],-1,MONTH)
+    )
+
+'_All Measures'[Previous Month Returns] =
+    CALCULATE(
+            [Total Returns],
+                DATEADD('Calendar Lookup'[Date],-1,MONTH)
+    )
+
+// ===== Targets & performance =====
+
+'_All Measures'[Target Revenue] =
+    [Total Revenue]*1.1
+
+'_All Measures'[Target Order] =
+    [Total Orders]*1.1
+
+'_All Measures'[Target Profit] =
+    [Total Profit] * 1.1
+
+'_All Measures'[Revenue Achievement %] =
+    DIVIDE(
+        [Total Revenue],
+        [Target Revenue],
+        0
+    )
+
+'_All Measures'[Performance Status] =
+    SWITCH(
+        TRUE(),
+        [Revenue Achievement %] >= 1, "Excellent",
+        [Revenue Achievement %] >= 0.90, "Strong",
+        [Revenue Achievement %] >= 0.75, "Satisfactory",
+        "Needs Improvement"
+    )
+
+// ===== What-if: price adjustment =====
+
+'Price Adjustment (%)'[Price Adjustment (%) Value] =
+    SELECTEDVALUE('Price Adjustment (%)'[Price Adjustment (%)])
+
+'_All Measures'[Average Retail Price] =
+    AVERAGE('Product Lookup'[ProductPrice])
+
+'_All Measures'[Adjusted Price] =
+    [Average Retail Price] * (1 + 'Price Adjustment (%)'[Price Adjustment (%) Value])
+
+'_All Measures'[Adjusted Revenue] =
+    SUMX('Sales Data','Sales Data'[OrderQuantity] * [Adjusted Price])
+
+'_All Measures'[Adjusted Profit] =
+    [Adjusted Revenue] - [Total Cost]
+
+'_All Measures'[Adjusted Profit %] =
+    DIVIDE(
+        [Adjusted Profit] - [Total Profit],
+        [Total Profit],
+        0
+    )
+
+// ===== Top customer =====
+
+'_All Measures'[Top Customer] =
+    VAR TopCustomer =
+        TOPN(
+            1,
+            ALLSELECTED('Customer Lookup'[Full Name]),
+            [Total Revenue],
+            DESC
+        )
+    RETURN
+        MAXX(
+            TopCustomer,
+            'Customer Lookup'[Full Name]
+        )
+
+'_All Measures'[Top Customer Revenue] =
+    MAXX(
+        TOPN(
+            1,
+            ALLSELECTED('Customer Lookup'[Full Name]),
+            [Total Revenue],
+            DESC
+        ),
+        [Total Revenue]
+    )
+
+'_All Measures'[Top Customer Orders] =
+    MAXX(
+        TOPN(
+            1,
+            ALLSELECTED('Customer Lookup'[Full Name]),
+            [Total Revenue],
+            DESC
+        ),
+        [Total Orders]
+    )
+
