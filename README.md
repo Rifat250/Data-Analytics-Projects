@@ -5,8 +5,8 @@ A collection of my data analytics projects built using Excel, Power BI, and SQL.
 ## 📊 Excel Projects
 
 - [Customer Pulse](https://github.com/Rifat250/Data-Analytics-Projects/tree/main/Excel%20Projects/Customer-Pulse)
-- [Customer Insights Dashboard](./Excel%20Projects/Customer%20Insights%20Dashboard)
 - [Superstore Sales Overview Dashboard](./Excel%20Projects/Superstore%20Sales%20Overview%20Dashboard)
+- [Customer Insights Dashboard](./Excel%20Projects/Customer%20Insights%20Dashboard)
 
 ## 📊 Google Sheets Projects
 
